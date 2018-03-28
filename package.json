@@ -1,0 +1,14 @@
+{
+  "name": "fullstackgame",
+  "version": "1.0.0",
+  "description": "A likely going to fail attempt to deconstruct hyperreality",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.16.3"
+  }
+}

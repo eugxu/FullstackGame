@@ -32,6 +32,10 @@ app.get('/form', (req, res, next) => {
 app.get('/baedrillard', (req, res, next) => {
 	res.send('the hyperreal has eaten this page');
 });
+
+app.get('/home', (req, res, next) => {
+		var filePath = path.join(__dirname, '/home.html')
+});
 /* Defines what function to all when the server recieves any request from http://localhost:8080 */
 server.on('listening', () => {
 

@@ -1,11 +1,12 @@
 /* The express module is used to look at the address of the request and send it to the correct function */
 var express = require('express');
-
+var bodyParser = require('body-parser');
+var mongoose = require('mongoose');
 /* The http module is used to listen for requests from a web browser */
 var http = require('http');
-
 /* The path module is used to transform relative paths to absolute paths */
 var path = require('path');
+var usermodel = require('./user.js').getModel();
 
 /* Creates an express application */
 var app = express();
@@ -18,7 +19,10 @@ var port =  process.env.PORT
 		? parseInt(process.env.PORT)
 		: 6942;
 
+var dbAddress = process.env.MONGODB_URI || 'mongodb://127.0.0.1/NAME_OF_GAME';
 
+function startServer() {
+app.use(bodyParser.json({ limit: '16mb' }));
 /* Defines what function to call when a request comes from the path '/' in http://localhost:8080 */
 app.get('/form', (req, res, next) => {
 
@@ -29,12 +33,21 @@ app.get('/form', (req, res, next) => {
 	res.sendFile(filePath);
 });
 
+app.post('/form', (req, res, next) => {
+	var newuser = new usermodel(req.body);
+	newuser.save(function(err) {
+		res.send(err || 'OK');
+	});
+
+});
+
 app.get('/baedrillard', (req, res, next) => {
 	res.send('the hyperreal has eaten this page');
 });
 
 app.get('/home', (req, res, next) => {
 		var filePath = path.join(__dirname, '/home.html')
+		res.sendFile(filePath);
 });
 /* Defines what function to all when the server recieves any request from http://localhost:8080 */
 server.on('listening', () => {
@@ -52,3 +65,7 @@ server.on('listening', () => {
 
 /* Tells the server to start listening to requests from defined port */
 server.listen(port);
+
+}
+
+mongoose.connect(dbAddress, startServer)

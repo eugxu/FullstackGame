@@ -7,22 +7,70 @@
 		<div>
       <label>Screen Name</label>
       <input type='text' name='username'>
-      <button>SUBMIT</button>
+      <div>
       <label>Preferred Pronouns</label>
-      <div>
-			<input type='checkbox' name='sheher'><label>She/her/hers</label>
     </div>
       <div>
-      <input type='checkbox' name='hehim'><label>He/him/his</label>
+			<input type='checkbox' name="sheher"><label>She/her/hers</label>
     </div>
       <div>
-      <input type='checkbox' name='theythem'><label>They/them/theirs</label>
+      <input type='checkbox' name="hehim"><label>He/him/his</label>
     </div>
       <div>
-      <input type='checkbox' name='other'><label>Other</label>
-      </div>
+      <input type='checkbox' name="theythem"><label>They/them/theirs</label>
+    </div>
+      <div>
+        <label>What is a heap of sand?</label>
+        <input type='text' name='username'>
+        <div>
+          <div>
+            <label>Password</label>
+            <input type='password' name='password'>
+          </div>
+          <div>
+            <label>Verify Password</label>
+            <input type='password' name='verifyPassword'>
+          </div>
+      <div>
 			<button>SUBMIT</button>
-		</div>
-    <div>
+    </div>
+    <script>
+    var $inputs =  document.querySelectorAll('input');
+    function grabData() {
+      var data = {};
+
+
+      for(var i = 0; i < $inputs.length; i++) {
+        var $input = $inputs[i];
+        if($input.type === 'text' || $input.type === 'password') {
+          data[$input.name] = $input.value;
+        } else if ($input.type === 'checkbox') {
+          data[$input.name] = $input.checked;
+        } else if ($input.type === 'checkbox' && $input.checked) {
+          data[$input.name] = $input.getAttribute('answer');
+        }
+    }
+    sendData(data);
+  }
+
+    function sendData(data) {
+
+    	// Creating a new request to the server that contains the data
+    	var req = new XMLHttpRequest();
+
+    	// Opening up a connection with the server to 'POST' data
+    	req.open('POST', '/form', true);
+
+    	// Explain to the server that we are sending the data in json format
+    	req.setRequestHeader('content-type', 'application/json')
+
+    	// Sending the data in JSON format
+    	req.send(JSON.stringify(data));
+    }
+
+    var $button = document.querySelector('button')
+    $button.addEventListener('click', grabData)
+
+    </script>
 	</body>
 </html>

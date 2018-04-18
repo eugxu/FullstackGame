@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html>
+
   <head>
-    <title>Sign Up</title>
+    <title>LOGIN</title>
     <link href="https://fonts.googleapis.com/css?family=Barlow+Semi+Condensed|Megrim" rel="stylesheet">
     <style>
 
@@ -21,14 +22,10 @@
       font-family: 'Megrim', cursive;
     }
 
-    .question {
+    label {
       font-size: 18pt;
       color: #C0B283;
       font-family: 'Barlow Semi Condensed', sans-serif;
-    }
-    .checkbox {
-      font size: 15pt;
-      color:
     }
 
     input{
@@ -38,7 +35,6 @@
       font-family: 'Barlow Semi Condensed', sans-serif;
       border: none;
     }
-
 
     button{
       font-size: 22pt;
@@ -60,48 +56,26 @@
     }
 
     </style>
+
   </head>
+
   <body>
-    <h1>First Time User<h1>
+    <h1>Login</h1>
 		<div>
-      <label class='question'>Screen Name</label>
+      <label>Username</label>
       <input type='text' name='username'>
     </div>
-      <label>Preferred Pronouns</label>
-    </div>
-      <div>
-			<input class='choice' type='checkbox' name="sheher"><label>She/her/hers</label>
-    </div>
-      <div>
-      <input type='checkbox' name="hehim"><label>He/him/his</label>
-    </div>
-      <div>
-      <input type='checkbox' name="theythem"><label>They/them/theirs</label>
-    </div>
-      <div>
-        <label>What is a heap of sand?</label>
-        <input type='text' name='sand'>
-        <div>
           <div>
             <label>Password</label>
             <input type='password' name='password'>
           </div>
-          <div>
-            <label>Verify Password</label>
-            <input type='password' name='verifyPassword'>
-          </div>
+          <div></div>
+          <div></div>
+          <div></div>
       <div>
-			<button>SUBMIT</button>
+			<button>login</button>
     </div>
     <script>
-    function verifyPassword() {
-      var $passwords = document.querySelectorAll('input[type="password"]');
-var isSamePassword = $passwords[0].value === $passwords[1].value;
-if(!isSamePassword) {
-	alert("Please enter the same password!")
-}
-return isSamePassword;
-}
 
     var $inputs =  document.querySelectorAll('input');
     function grabData() {
@@ -122,14 +96,12 @@ return isSamePassword;
   }
 
     function sendData(data) {
-        if(!verifyPassword()) {
-          return;
-        }
+
     	// Creating a new request to the server that contains the data
     	var req = new XMLHttpRequest();
 
     	// Opening up a connection with the server to 'POST' data
-    	req.open('POST', '/form', true);
+    	req.open('POST', '/login', true);
 
     	// Explain to the server that we are sending the data in json format
     	req.setRequestHeader('content-type', 'application/json')
@@ -137,6 +109,11 @@ return isSamePassword;
         function readyStateChange() {
         	if(req.readyState !== 4) return;
         	if(req.status !== 200) return;
+
+        	data = JSON.parse(req.responseText);
+        	if(data.error) {
+        		return alert(data.error);
+        	}
           window.location.href = '/game';
         }
         req.onreadystatechange = readyStateChange;

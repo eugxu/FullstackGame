@@ -7,6 +7,7 @@ var http = require('http');
 /* The path module is used to transform relative paths to absolute paths */
 var path = require('path');
 var usermodel = require('./user.js').getModel();
+var crypto = require('crypto');
 
 /* Creates an express application */
 var app = express();
@@ -22,6 +23,20 @@ var port =  process.env.PORT
 var dbAddress = process.env.MONGODB_URI || 'mongodb://127.0.0.1/NAME_OF_GAME';
 
 function startServer() {
+
+	function verifyUser(username, password, callback) {
+		if(!username) return callback ('No username given');
+		if(!password) return callback ('No password given');
+		usermodel.findOne({username: username}, (err, user) => {
+				if(err) return callback('Error connecting to database');
+				if(!user) return callback('Incorrect username');
+				crypto.pbkdf2(password, user.salt, 10000, 256, 'sha256', (err, resp) => {
+					if(err) return callback('Error handling password');
+					if(resp.toString('base64') === user.password) return callback(null);
+					callback('Incorrect password');
+				});
+		});
+	}
 app.use(bodyParser.json({ limit: '16mb' }));
 /* Defines what function to call when a request comes from the path '/' in http://localhost:8080 */
 app.get('/form', (req, res, next) => {
@@ -34,9 +49,36 @@ app.get('/form', (req, res, next) => {
 });
 
 app.post('/form', (req, res, next) => {
+
+	// Converting the request in an user object
 	var newuser = new usermodel(req.body);
-	newuser.save(function(err) {
-		res.send(err || 'OK');
+
+	// Grabbing the password from the request
+	var password = req.body.password;
+
+	// Adding a random string to salt the password with
+	var salt = crypto.randomBytes(128).toString('base64');
+	newuser.salt = salt;
+
+	// Winding up the crypto hashing lock 10000 times
+	var iterations = 10000;
+	crypto.pbkdf2(password, salt, iterations, 256, 'sha256', function(err, hash) {
+		if(err) {
+			return res.send({error: err});
+		}
+		newuser.password = hash.toString('base64');
+		// Saving the user object to the database
+		newuser.save(function(err) {
+
+			// Handling the duplicate key errors from database
+			if(err && err.message.includes('duplicate key error') && err.message.includes('username')) {
+				return res.send({error: 'Username, ' + req.body.username + 'already taken'});
+			}
+			if(err) {
+				return res.send({error: err.message});
+			}
+			res.send({error: null});
+		});
 	});
 
 });
@@ -47,6 +89,19 @@ app.get('/baedrillard', (req, res, next) => {
 
 app.get('/home', (req, res, next) => {
 		var filePath = path.join(__dirname, '/home.html')
+		res.sendFile(filePath);
+});
+
+app.post('/login', (req, res, next) => {
+	var username = req.body.username;
+	var password = req.body.password;
+	verifyUser(username, password, (error) => {
+			res.send({error:error});
+	})
+});
+
+app.get('/login', (req, res, next) => {
+		var filePath = path.join(__dirname, '/login.html')
 		res.sendFile(filePath);
 });
 /* Defines what function to all when the server recieves any request from http://localhost:8080 */

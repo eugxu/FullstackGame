@@ -1,0 +1,65 @@
+<DOCTYPE! html>
+<html>
+<head>
+  <title>
+    G a m e y e e
+  </title>
+  <style>
+  * {
+				padding: 0;
+				margin: 0;
+			}
+			body {
+				overflow: hidden;
+			}
+			canvas {
+				background: url('http://wisen.space/capture/load/5-XO21O-HWAmE_51AlMuoX4u.jpg') no-repeat center center fixed;
+				background-size: 100vw 100vh;
+			}
+
+#chat{
+  position: fixed;
+  left: 3vw;
+  bottom: 3vh;
+}
+[type='text']{
+    background-color: transparent;
+}
+  </style>
+</head>
+<body>
+  <div id='chat'>
+    <ul>
+    </ul>
+    <div>
+      <input type='text'>
+    </div>
+  </div>
+  <canvas>
+  </canvas>
+  <script src='/js/socket.io.js'>
+  </script>
+  <script>
+  var $canvas=document.querySelector('canvas');
+  $canvas.width=window.screen.width;
+  $canvas.height=window.screen.height;
+  var socket=io();
+  var $input=document.querySelector('input');
+  document.body.addEventListener('keypress', submitMessage);
+  function submitMessage(e){
+    if(e.key!=='Enter')return;
+    if(document.activeElement.tagName !== 'INPUT' ) return;
+    if($input.value === '') return;
+    socket.emit('message',$input.value);
+    $input.value='';
+  }
+  socket.on('broadcast', function(recievedThing){
+    var $ul = document.querySelector('#chat ul'); 
+    var $li = document.createElement('li'); 
+    $li.innerText = recievedThing; 	
+    $ul.appendChild($li)
+  })
+
+  </script>
+</body>
+</html>

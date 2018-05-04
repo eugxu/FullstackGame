@@ -8,13 +8,14 @@ var http = require('http');
 var path = require('path');
 var usermodel = require('./user.js').getModel();
 var crypto = require('crypto');
+var Io = require('socket.io');
 
 /* Creates an express application */
 var app = express();
 
 /* Creates the web server */
 var server = http.createServer(app);
-
+var io = Io(server);
 /* Defines what port to use to listen to web requests */
 var port =  process.env.PORT
 		? parseInt(process.env.PORT)
@@ -22,8 +23,19 @@ var port =  process.env.PORT
 
 var dbAddress = process.env.MONGODB_URI || 'mongodb://127.0.0.1/NAME_OF_GAME';
 
+function addSockets() {
+	io.on('connection',function(socket){
+		console.log('user connected to the hyperreal >:) Initate destruction.')
+			socket.on('disconnect', function(){
+				console.log('user thinks they have disconnected from the hyperreal. Continue destruction.')
+			})
+			socket.on('message', function(recievedThing){
+				io.emit('broadcast', recievedThing);
+			})
+	})
+}
 function startServer() {
-
+	addSockets()
 	function verifyUser(username, password, callback) {
 		if(!username) return callback ('No username given');
 		if(!password) return callback ('No password given');
@@ -37,6 +49,7 @@ function startServer() {
 				});
 		});
 	}
+app.use(express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.json({ limit: '16mb' }));
 /* Defines what function to call when a request comes from the path '/' in http://localhost:8080 */
 app.get('/form', (req, res, next) => {
@@ -103,6 +116,11 @@ app.post('/login', (req, res, next) => {
 app.get('/login', (req, res, next) => {
 		var filePath = path.join(__dirname, '/login.html')
 		res.sendFile(filePath);
+});
+
+app.get('/game', (req, res, next) => {
+	var filePath = path.join(__dirname, '/game.html')
+	res.sendFile(filePath);
 });
 /* Defines what function to all when the server recieves any request from http://localhost:8080 */
 server.on('listening', () => {

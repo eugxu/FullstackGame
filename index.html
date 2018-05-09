@@ -11,7 +11,7 @@
       text-align: center;
     }
     div{
-      padding-bottom: 6pt;
+      padding-bottom: 2pt;
     }
 
     h1 {
@@ -21,14 +21,16 @@
       font-family: 'Megrim', cursive;
     }
 
-    .question {
+    label {
       font-size: 18pt;
       color: #C0B283;
       font-family: 'Barlow Semi Condensed', sans-serif;
     }
-    .checkbox {
-      font size: 15pt;
-      color:
+
+    .choice {
+      font-size: 15pt;
+      color: #C0B283;
+      font-family: 'Barlow Semi Condensed', sans-serif;
     }
 
     input{
@@ -74,13 +76,13 @@
       <label>Preferred Pronouns</label>
     </div>
       <div>
-			<input class='choice' type='checkbox' name="sheher"><label>She/her/hers</label>
+			<input type='checkbox' name="sheher"><label class='choice'>She/her/hers</label>
     </div>
       <div>
-      <input type='checkbox' name="hehim"><label>He/him/his</label>
+      <input type='checkbox' name="hehim"><label class='choice'>He/him/his</label>
     </div>
       <div>
-      <input type='checkbox' name="theythem"><label>They/them/theirs</label>
+      <input type='checkbox' name="theythem"><label class='choice'>They/them/theirs</label>
     </div>
       <div>
         <label>What is a heap of sand?</label>

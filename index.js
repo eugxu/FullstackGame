@@ -9,6 +9,7 @@ var path = require('path');
 var usermodel = require('./user.js').getModel();
 var crypto = require('crypto');
 var Io = require('socket.io');
+var fs=require('fs');
 
 /* Creates an express application */
 var app = express();
@@ -25,14 +26,16 @@ var dbAddress = process.env.MONGODB_URI || 'mongodb://127.0.0.1/NAME_OF_GAME';
 
 function addSockets() {
 	io.on('connection',function(socket){
-		console.log('user connected to the hyperreal >:) Initate destruction.')
-			socket.on('disconnect', function(){
-				console.log('user thinks they have disconnected from the hyperreal. Continue destruction.')
-			})
-			socket.on('message', function(recievedThing){
-				io.emit('broadcast', recievedThing);
-			})
-	})
+		var user = socket.handshake.query.user;
+		io.emit('newMessage',{username: user, message: 'connected to the hyperreal >:) initiate destruction.'});
+
+		socket.on('disconnect', () =>{
+			io.emit('newMessage',{username: user, message: 'thinks they have disconnected from the hyperreal. Continue destruction.'});
+		});
+		socket.on('message', (message) =>{
+			io.emit('newMessage', message);
+		});
+	});
 }
 function startServer() {
 	addSockets()
@@ -120,7 +123,10 @@ app.get('/login', (req, res, next) => {
 
 app.get('/game', (req, res, next) => {
 	var filePath = path.join(__dirname, '/game.html')
-	res.sendFile(filePath);
+	var  fileContents = fs.readFileSync(filePath, 'utf8');
+	fileContents = fileContents.replace('{{USERNAME}}', 'llama')
+	res.send(fileContents);
+
 });
 /* Defines what function to all when the server recieves any request from http://localhost:8080 */
 server.on('listening', () => {

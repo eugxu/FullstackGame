@@ -8,6 +8,7 @@ var model = mongoose.model('user', new mongoose.Schema({
 	, sand: {type: String}
 	, password: {type: String}
 	, salt: {type: String}
+	, avatar: {type: String}
 }));
 
 exports.getModel = function() {

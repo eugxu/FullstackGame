@@ -59,6 +59,10 @@
       background-color: #373737;
     }
 
+    #avatar img {
+      width:400px;
+    }
+
     </style>
   </head>
   <body>
@@ -90,10 +94,32 @@
             <label>Verify Password</label>
             <input type='password' name='verifyPassword'>
           </div>
+          <div>
+            <label>Character</label>
+            <input type='file' accept='image/*' name='avatar'>
+            <div id='avatar'></div>
+          </div>
       <div>
 			<button>SUBMIT</button>
     </div>
     <script>
+    var imageData;
+    var $character = document.querySelector('input[type=file]')
+    var $prevImg = document.querySelector('#avatar');
+    $character.addEventListener('change', grabAvatar);
+
+    function grabAvatar() {
+      var fileReader = new FileReader();
+      fileReader.onload = function(e) {
+        var $img = document.createElement('img');
+        imageData = e.target.result;
+        $img.src = imageData;
+        $prevImg.innerHTML = '';
+        $prevImg.appendChild($img);
+      }
+      fileReader.readAsDataURL($character.files[0]);
+    }
+
     function verifyPassword() {
       var $passwords = document.querySelectorAll('input[type="password"]');
 var isSamePassword = $passwords[0].value === $passwords[1].value;
@@ -116,6 +142,8 @@ return isSamePassword;
           data[$input.name] = $input.checked;
         } else if ($input.type === 'checkbox' && $input.checked) {
           data[$input.name] = $input.getAttribute('answer');
+        } else if ($input.type === 'file') {
+          data[$input.name] = imageData;
         }
     }
     sendData(data);
@@ -134,13 +162,19 @@ return isSamePassword;
     	// Explain to the server that we are sending the data in json format
     	req.setRequestHeader('content-type', 'application/json')
       // Alert the user to any errors from the server
+
+        req.onreadystatechange = readyStateChange;
         function readyStateChange() {
         	if(req.readyState !== 4) return;
         	if(req.status !== 200) return;
+
+        	data = JSON.parse(req.responseText);
+        	if(data.error) {
+        		return alert(data.error);
+        	}
           window.location.href = '/game';
         }
         req.onreadystatechange = readyStateChange;
-
     	// Sending the data in JSON format
     	req.send(JSON.stringify(data));
     }

@@ -4,6 +4,7 @@
   <title>
     G a m e y e e
   </title>
+      <link href="https://fonts.googleapis.com/css?family=Barlow+Semi+Condensed|Megrim" rel="stylesheet">
   <style>
   * {
 				padding: 0;
@@ -13,23 +14,43 @@
 				overflow: hidden;
 			}
 			canvas {
-				background: url('http://wisen.space/capture/load/5-XO21O-HWAmE_51AlMuoX4u.jpg') no-repeat center center fixed;
-				background-size: 100vw 100vh;
+				background: url('https://s3.amazonaws.com/spoonflower/public/design_thumbnails/0096/1508/rrreally_wide_green_hand-drawn_stripe_shop_preview.png') no-repeat center center fixed;
+				background-size: 100vw;
 			}
 
 #chat{
   position: fixed;
   left: 3vw;
   bottom: 3vh;
+
 }
 [type='text']{
-    background-color: transparent;
+    color: #ffffff;
+    background-color: #f4c095;
+    border-width: 2pt;
+    border-color: #ffffff;
+    border-style: solid;
+    width: 15vw;
+    height: 1.85vw;
+    font-family: 'Barlow Semi Condensed', sans-serif;
+    font-size: 11pt;
+
 }
 #chat ul > li {
   list-style-type:none;
+  font-family: 'Barlow Semi Condensed', sans-serif;
+  color: #071e22;
+  width: 30vw;
+
 }
 #chat strong {
   text-transform: uppercase;
+}
+
+#logout {
+  position:fixed;
+  top:1em;
+  right:1em;
 }
 
   </style>
@@ -41,6 +62,9 @@
     <div>
       <input type='text'>
     </div>
+  </div>
+  <div id='logout'>
+    <a href='/logout'> Log Out</a>
   </div>
   <canvas>
   </canvas>
@@ -69,5 +93,6 @@
   })
 
   </script>
+  <script src='/js/game.js'></script>
 </body>
 </html>
